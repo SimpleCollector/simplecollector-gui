@@ -1,0 +1,139 @@
+<h2 class="ui top attached block header">
+	Collection group
+	<div *ngIf="group.id?.length" class="sub header">{{originalName}}</div>
+	<div *ngIf="!group.id?.length" class="sub header">New</div>
+</h2>
+
+<form #collectionForm="ngForm" class="ui attached form segment" (ngSubmit)="onSubmit(collectionForm.value)">
+	<div class="fields">
+		<div class="six wide required field" [class.error]="!name.valid && name.touched">
+			<label for="name">Name</label>
+			<input type="text" id="name" name="name" [(ngModel)]="group.name" #name="ngModel" placeholder="Unique name" required>
+		</div>
+
+		<div class="four wide required field" [class.error]="!type.valid && type.touched">
+			<label for="type">Type</label>
+			<sui-select class="selection"
+			    [(ngModel)]="group.type"
+				[options]="collectionTypes"
+                labelField="display"
+                valueField="value"
+				placeholder="Select type"
+				name="type"
+				required
+				#typeSelect #type="ngModel">
+				<sui-select-option *ngFor="let option of typeSelect.filteredOptions" [value]="option"></sui-select-option>
+			</sui-select>
+		</div>
+
+		<div class="two wide required field" [class.error]="!interval.valid && interval.touched">
+			<label for="interval">Interval</label>
+			<input type="number"id="interval" name="interval" [(ngModel)]="group.interval" #interval="ngModel" placeholder="Seconds" required>
+		</div>
+	</div>
+
+	<div *ngIf="group.type == 'OBJECT'">
+		<div class="ui segment">
+			<div class="ui top attached label">Objects to collect</div>
+			<div class="fields">
+				<div class="sixteen wide required field" [class.error]="!objects.valid && objects.touched">
+					<label for="objects">Objects</label>
+					<csv-input id="objects" name="objects" [(ngModel)]="group.objectType.objects" #objects="ngModel" placeholder="Object ids or names separated by comma" required></csv-input>
+				</div>
+			</div>
+			<div class="fields" style="margin-bottom: 0;">
+				<div class="six wide required field" [class.error]="!measurement.valid && measurement.touched">
+					<label for="measurement">Measurement name</label>
+					<input type="text"id="measurement" name="measurement" [(ngModel)]="group.objectType.measurementName" #measurement="ngModel" placeholder="Used for database" required>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div *ngIf="group.type == 'TABLE'">
+		<div class="ui segment">
+			<div class="ui top attached label">Table objects to collect</div>
+			<div class="fields">
+				<div class="sixteen wide required field" [class.error]="!columns.valid && columns.touched">
+					<label for="columns">Table column objects</label>
+					<csv-input id="columns" name="columns" [(ngModel)]="group.tableType.columns" #columns="ngModel" placeholder="Object ids or names separated by comma" required></csv-input>
+				</div>
+			</div>
+			<div class="fields" style="margin-bottom: 0;">
+				<div class="three wide required field" [class.error]="!tagname.valid && tagname.touched">
+					<label for="tagname">Tag name</label>
+					<input type="text"id="tagname" name="tagname" [(ngModel)]="group.tableType.tagName" #tagname="ngModel" placeholder="Name of tag to store with a table row" required>
+				</div>
+				<div class="two wide required field" [class.error]="!tagValueIx.valid && tagValueIx.touched">
+					<label for="tagValueIx">Tag value index</label>
+					<input type="number"id="tagValueIx" name="tagValueIx" [(ngModel)]="group.tableType.tagValueColumnIndex" #tagValueIx="ngModel" required>
+				</div>
+				<div class="six wide required field" [class.error]="!measurement.valid && measurement.touched">
+					<label for="measurement">Measurement name</label>
+					<input type="text"id="measurement" name="measurement" [(ngModel)]="group.objectType.measurementName" #measurement="ngModel" placeholder="Name of the measurement it is stored in" required>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="ui segment">
+		<div class="ui top attached label">Device(s)</div>
+		<div class="inline fields">
+			<div class="field">
+				<label>Collect from a single device or a group of devices?</label>
+				<div class="ui radio checkbox">
+					<input type="radio" name="hosttype" value="s" [(ngModel)]="hosttype"> <label>Single</label>
+				</div>
+			</div>
+			<div class="field">
+				<div class="ui radio checkbox">
+					<input type="radio" name="hosttype" value="g" [(ngModel)]="hosttype"> <label>Group</label>
+				</div>
+			</div>
+		</div>
+
+		<div class="fields" style="margin-bottom: 0;">
+			<div class="inline required field" *ngIf="hosttype == 's'" [class.error]="!host.valid && host.touched">
+				<label for="host">Device:</label> <input type="text" id="host" name="host" #host="ngModel" [(ngModel)]="group.host"
+					placeholder="Device IP or DNS name" required>
+			</div>
+
+			<div class="inline required field" *ngIf="hosttype == 'g'" [class.error]="!hostgroup.valid && hostgroup.touched">
+				<label for="hostgroup">Device group:</label>
+				<sui-select class="selection"
+				    [(ngModel)]="group.hosts.name"
+					[options]="hostgroups"
+					placeholder="Select device group"
+					name="hostgroup"
+					required #hostgroupSelect #hostgroup="ngModel">
+				<sui-select-option *ngFor="let option of hostgroupSelect.filteredOptions" [value]="option"></sui-select-option> </sui-select>
+			</div>
+		</div>
+	</div>
+
+	<div class="ui segment">
+		<div class="ui top attached label">SNMP configuration</div>
+		<div class="fields" style="margin-bottom: 0;">
+			<div class="four wide required field" [class.error]="!snmpconfig.valid && snmpconfig.touched">
+				<label for="snmpconfig">Authentication</label>
+				<sui-select class="selection" 
+				    [(ngModel)]="group.config.name"
+				    [options]="snmpconfigs"
+				    placeholder="Select authentication"
+					name="hostgroup"
+					required #snmpconfigSelect #snmpconfig="ngModel">
+				<sui-select-option *ngFor="let option of snmpconfigSelect.filteredOptions" [value]="option"></sui-select-option> </sui-select>
+			</div>
+
+			<div class="six wide field">
+				<label for="mibs">MIBS</label>
+				<csv-input id="mibs" name="mibs" [(ngModel)]="group.mibs" placeholder="MIBS separated by comma"></csv-input>
+			</div>
+		</div>
+	</div>
+
+	<div *ngIf="!collectionForm.form.valid" class="ui error message">Please fill in the required fields</div>
+
+	<button type="submit" class="ui primary button" [disabled]="!collectionForm.form.valid">Save</button>
+
+</form>

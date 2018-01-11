@@ -1,0 +1,63 @@
+<h2>
+    Collectors
+</h2>
+
+<table class="ui selectable single line table">
+  <thead>
+  <tr>
+  	<th>Name</th>
+  	<th>Type</th>
+  	<th>Interval</th>
+  	<th>SNMP</th>
+  	<th>Host/Group</th>
+  	<th>&nbsp;</th>
+  </tr>
+  </thead>
+  <tbody>
+  
+<tr *ngFor="let group of pollGroups" [routerLink]="['/collector', group.id]">
+	<td>{{group.name}}</td>
+	<td>
+	    <i class="folder outline icon"></i>
+		{{group.type}}
+	</td>
+	<td>
+		{{group.interval}}s
+	</td>
+	<td>
+		<i class="setting icon"></i>
+		{{group.snmpConfig}}
+	</td>
+	<td *ngIf="group.host">
+		{{group.host}}
+	</td>
+	<td *ngIf="group.hostsGroup">
+		<i class="folder outline icon"></i>
+		{{group.hostsGroup}}
+	</td>
+	<td>
+	    <i class="large red trash icon link icon" (click)="deletePollGroup(group.id, group.name); $event.stopPropagation()"></i>
+	</td>
+</tr>
+  	
+  	
+  </tbody>
+</table>
+
+<sui-pagination [collectionSize]="total"
+                [pageSize]="maxOnPage"
+                [maxSize]="10"
+                (pageChange)="loadPage($event)">
+</sui-pagination>
+
+<template let-context let-modal="modal" #modalTemplate>
+    <div class="header">Delete</div>
+    <div class="content">
+        <p>Do you really want to delete {{ context.data }}?</p>
+    </div>
+    <div class="actions">
+        <button class="ui red button" (click)="modal.deny('denied')" autofocus>Cancel</button>
+        <button class="ui green button" (click)="modal.approve('approved')">OK</button>
+    </div>
+</template>
+

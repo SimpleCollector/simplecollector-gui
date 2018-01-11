@@ -1,0 +1,31 @@
+  <div class="ui fixed inverted menu">
+    <div class="ui container">
+      <a routerLink="/status" class="header item">
+        <img src="./assets/sc-logo3.png" class="logo">
+      </a>
+      
+      <div class="ui simple dropdown item">
+        Configuration <i class="dropdown icon"></i>
+        <div class="menu">
+          <a routerLink="/collectors" routerLinkActive="active" class="item">Collectors</a>
+          <a routerLink="/devicegroups" routerLinkActive="active" class="item">Device groups</a>
+          <a routerLink="/snmpconfigs" routerLinkActive="active" class="item">SNMP configurations</a>
+          <div class="divider"></div>
+          <div class="item">
+            <i class="dropdown icon"></i>
+            New
+            <div class="menu">
+              <a class="item" routerLink="/collector" routerLinkActive="active">Collector</a>
+              <a class="item" routerLink="/devicegroup" routerLinkActive="active">Device group</a>
+              <a class="item" routerLink="/snmpconfig" routerLinkActive="active">SNMP configuration</a>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <a routerLink="/reload" class="item">Activate configuration</a>
+        </div>
+      </div>
+      
+      <a routerLink="/status" routerLinkActive="active" class="item">Status</a>
+      
+    </div>
+  </div>
