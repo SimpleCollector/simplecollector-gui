@@ -1,0 +1,40 @@
+# Automatically build and deploy to GitHub releases by Travis CI
+
+language: node_js
+node_js:
+  - "node"
+
+cache:
+  directories:
+    - "node_modules"
+
+branches:
+  only:
+    - master
+
+before_script:
+  - npm install -g @angular/cli@latest
+  - npm install
+
+script:
+  - ng build --prod
+  - cd dist
+  - tar cvzf ../simplecollector-gui-dist.tgz *
+  - cd ..
+
+before_deploy:
+   - git config --local user.name "SimpleCollector"
+   - git config --local user.email "35264312+SimpleCollector@users.noreply.github.com"
+   - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
+      
+#deploy:
+#  provider: releases
+#  api_key: "$GITHUB_OAUTH_TOKEN"
+#  file: "simplecollector-gui-dist.tgz"
+#  skip_cleanup: true
+#  overwrite: true
+
+notifications:
+  email:
+    on_failure: always
+    on_success: change
