@@ -27,12 +27,13 @@ before_deploy:
    - git config --local user.email "35264312+SimpleCollector@users.noreply.github.com"
    - git tag "$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)"
       
-#deploy:
-#  provider: releases
-#  api_key: "$GITHUB_OAUTH_TOKEN"
-#  file: "simplecollector-gui-dist.tgz"
-#  skip_cleanup: true
-#  overwrite: true
+deploy:
+  provider: releases
+  api_key:
+    secure: "$GITHUB_API_KEY"
+  file: "simplecollector-gui-dist.tgz"
+  skip_cleanup: true
+  overwrite: true
 
 notifications:
   email:
