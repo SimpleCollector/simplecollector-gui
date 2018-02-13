@@ -13,6 +13,9 @@ branches:
     - master
 
 before_script:
+  - git config --local user.name "SimpleCollector"
+  - git config --local user.email "35264312+SimpleCollector@users.noreply.github.com"
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then git tag -f "latest-build"; git push -q --force https://$TAG_TOKEN@github.com/SimpleCollector/simplecollector-gui tag latest-build; fi
   - npm install -g @angular/cli@latest
   - npm install
 
@@ -21,11 +24,6 @@ script:
   - cd dist
   - tar cvzf ../simplecollector-gui-dist.tgz *
   - cd ..
-
-before_deploy:
-   - git config --local user.name "SimpleCollector"
-   - git config --local user.email "35264312+SimpleCollector@users.noreply.github.com"
-   - git tag "latest-build"
       
 deploy:
   provider: releases
@@ -34,6 +32,14 @@ deploy:
   file: "simplecollector-gui-dist.tgz"
   skip_cleanup: true
   overwrite: true
+  on:
+    repo: SimpleCollector/simplecollector-gui
+    tags: true
+  
+after_deploy:
+  # Trigger docker hub build
+  - |-
+    curl -s -H "Content-Type: application/json" --data '{"source_type": "Branch", "source_name": "master"}' -X POST https://registry.hub.docker.com/u/simplecollector/simplecollector-app/trigger/$DOCKERHUB_TOKEN/
 
 notifications:
   email:
